@@ -119,7 +119,7 @@ def test_latest_filing_per_org_uses_each_orgs_own_max_year():
     df = add_metrics(build_rows(orgs))
     latest = latest_filing_per_org(df)
     years = dict(zip(latest["org"], latest["tax_year"]))
-    assert years == {"A": 2021, "B": 2020}  # different years -- exactly the point
+    assert years == {"A": 2021, "B": 2020}  # different years: exactly the point
 
 
 # ---------------------------------------------------------------------------

@@ -7,7 +7,7 @@ program/management/fundraising columns (that level of detail lives
 only in the full e-file XML), so this deliberately does NOT claim a
 classic "program expense ratio." Instead it computes what the real
 numbers actually support: revenue mix, operating margin, reserve
-runway, compensation load, and leverage -- all genuine solvency and
+runway, compensation load, and leverage, all genuine solvency and
 sustainability signals, all traceable to a specific field in a
 specific filing.
 """
@@ -72,7 +72,7 @@ def add_metrics(df: pd.DataFrame) -> pd.DataFrame:
     df["investment_income_share"] = safe_div(df["investment_income"], df["total_revenue"])
     df["leverage"] = safe_div(df["total_liabilities_end"], df["total_assets_end"])
 
-    # Largest of the three reported revenue categories -- a revenue-MIX concentration
+    # Largest of the three reported revenue categories: a revenue-MIX concentration
     # proxy, not a single-donor/single-source concentration measure. 70% "contributions"
     # could be one foundation or ten thousand small donors; this can't distinguish them.
     revenue_cols = ["contribution_share", "program_revenue_share", "investment_income_share"]
@@ -84,7 +84,7 @@ def add_metrics(df: pd.DataFrame) -> pd.DataFrame:
 
 def latest_filing_per_org(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Each org's own most recent filing -- NOT necessarily the same tax
+    Each org's own most recent filing, NOT necessarily the same tax
     year across orgs, since filing availability differs. Callers must
     not label this with a single shared fiscal year.
     """
@@ -113,7 +113,7 @@ DEFAULT_RISK_THRESHOLDS = {
 
 def evaluate_risk_flags(row: pd.Series, thresholds: dict | None = None) -> list[str]:
     """
-    Screening flags against illustrative, adjustable thresholds -- not
+    Screening flags against illustrative, adjustable thresholds, not
     universal nonprofit solvency standards. A flag here means "worth a
     board or program officer's attention," not "this org is in trouble."
     """
@@ -123,21 +123,21 @@ def evaluate_risk_flags(row: pd.Series, thresholds: dict | None = None) -> list[
     reserve_months = row["reserve_months"]
     if pd.notna(reserve_months) and reserve_months < t["reserve_months_floor"]:
         flags.append(
-            f"Reserve runway is {reserve_months:.1f} months -- below the "
+            f"Reserve runway is {reserve_months:.1f} months, below the "
             f"{t['reserve_months_floor']:.0f}-month illustrative floor."
         )
 
     leverage = row["leverage"]
     if pd.notna(leverage) and leverage > t["leverage_ceiling"]:
         flags.append(
-            f"Liabilities are {leverage:.0%} of assets -- above the "
+            f"Liabilities are {leverage:.0%} of assets, above the "
             f"{t['leverage_ceiling']:.0%} illustrative leverage ceiling."
         )
 
     concentration = row["largest_revenue_category_share"]
     if pd.notna(concentration) and concentration > t["concentration_ceiling"]:
         flags.append(
-            f"{concentration:.0%} of revenue falls in a single reported category -- above the "
+            f"{concentration:.0%} of revenue falls in a single reported category, above the "
             f"{t['concentration_ceiling']:.0%} illustrative concentration ceiling. This is a "
             f"revenue-mix signal, not proof of single-donor dependence."
         )

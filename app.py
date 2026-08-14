@@ -26,7 +26,7 @@ st.caption(
     "[ProPublica's Nonprofit Explorer API](https://projects.propublica.org/nonprofits/api/) "
     "(no login required), with each organization's EIN verified against a known-good value "
     "at fetch time (see `scripts/fetch_data.py`). Every metric below is computed directly "
-    "from filed figures -- revenue, expenses, assets, liabilities -- not survey or "
+    "from filed figures (revenue, expenses, assets, liabilities), not survey or "
     "self-reported data. See `src/data_prep.py` for exactly which 990 line items feed each "
     "metric."
 )
@@ -47,7 +47,7 @@ with st.sidebar.expander("Screening thresholds (illustrative, adjustable)"):
 org_df = df[df["org"] == selected_org].sort_values("tax_year")
 org_latest = org_df.iloc[-1]
 
-st.subheader(f"{selected_org} ({sector}) -- FY{int(org_latest['tax_year'])}")
+st.subheader(f"{selected_org} ({sector}), FY{int(org_latest['tax_year'])}")
 
 c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Total revenue", f"${org_latest['total_revenue']:,.0f}")
@@ -57,7 +57,7 @@ c4.metric("Leverage (liab/assets)", f"{org_latest['leverage']:.2f}")
 growth = org_latest["revenue_growth_yoy"]
 c5.metric("Revenue growth YoY", f"{growth:.1%}" if pd.notna(growth) else "n/a")
 
-st.markdown("**Risk flags** *(illustrative screening thresholds -- adjustable in the sidebar, not universal standards)*")
+st.markdown("**Risk flags** *(illustrative screening thresholds, adjustable in the sidebar, not universal standards)*")
 flags = evaluate_risk_flags(org_latest, thresholds)
 if not flags:
     st.success("No threshold flags tripped on the latest filing.")
@@ -97,16 +97,16 @@ fig.update_layout(margin=dict(l=10, r=10, t=10, b=10), height=320, yaxis_tickfor
 st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
-st.markdown(f"**Peer comparison -- {sector} sector, latest available filing by organization**")
+st.markdown(f"**Peer comparison: {sector} sector, latest available filing by organization**")
 st.caption(
     "Each organization's own most recent filing, which may be a different tax year across "
-    "orgs -- filing availability isn't synchronized across the sample."
+    "orgs; filing availability isn't synchronized across the sample."
 )
 peers = sector_peer_group(latest, sector)
 if peers is None:
     n = latest.loc[latest["sector"] == sector, "org"].nunique()
     st.info(
-        f"Only {n} organization(s) in this 20-org sample fall under '{sector}' -- too few for "
+        f"Only {n} organization(s) in this 20-org sample fall under '{sector}', too few for "
         f"a meaningful peer comparison. Showing the organization's own trend above instead."
     )
 else:

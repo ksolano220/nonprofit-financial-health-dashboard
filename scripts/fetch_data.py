@@ -1,7 +1,7 @@
 """
 Pulls multi-year financial filings for a curated sample of real U.S.
 nonprofits from ProPublica's Nonprofit Explorer API (public, no key
-required -- the same public dataset ProPublica's own product runs on).
+required, the same public dataset ProPublica's own product runs on).
 
 API docs: https://projects.propublica.org/nonprofits/api
 """
@@ -15,13 +15,13 @@ import requests
 BASE = "https://projects.propublica.org/nonprofits/api/v2"
 RAW_PATH = Path(__file__).resolve().parent.parent / "data" / "raw" / "filings.json"
 
-# query, sector, expected_state, expected_ein -- curated across a mix of
+# query, sector, expected_state, expected_ein: curated across a mix of
 # sizes and causes. expected_ein was confirmed against a live API search
 # for each org at the time this list was built; search_ein() below
 # re-verifies every fetch against it and raises rather than silently
 # accepting a same-name mismatch (e.g. "Chalkbeat" vs "Chalkhead Baptist
 # Church" ranking above it on a fuzzy-name search). This is a fixed
-# sample of 20 known organizations, not a general-purpose org lookup --
+# sample of 20 known organizations, not a general-purpose org lookup;
 # the expected-EIN list is exactly why that's safe to do here.
 ORGS = [
     ("ProPublica", "Journalism", None, "142007220"),
@@ -56,7 +56,7 @@ def search_ein(query: str, expected_state: str | None, expected_ein: str) -> tup
     Resolves an org name to an EIN via live search, then validates the
     result against the known-good expected_ein for this fixed 20-org
     sample. Raises EinMismatch rather than silently trusting the top
-    fuzzy-match result -- a plain name search can rank an unrelated
+    fuzzy-match result: a plain name search can rank an unrelated
     same-ish-named org above the intended one (confirmed during
     development: "Chalkbeat" ranked a Baptist church above the actual
     newsroom, which is why Chalkbeat isn't in this sample).
@@ -75,7 +75,7 @@ def search_ein(query: str, expected_state: str | None, expected_ein: str) -> tup
     if resolved_ein != expected_ein.zfill(9):
         raise EinMismatch(
             f"{query!r}: top search result is {top['name']!r} (EIN {resolved_ein}), "
-            f"expected EIN {expected_ein}. Search ranking may have changed -- verify "
+            f"expected EIN {expected_ein}. Search ranking may have changed; verify "
             f"manually before trusting this org's data."
         )
     return resolved_ein, top["name"]

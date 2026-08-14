@@ -10,7 +10,7 @@ where's the risk?**
 Built on real IRS Form 990 filings for 20 U.S. nonprofits (journalism,
 philanthropy infrastructure, education, workforce development, human
 services, health, environment, and financial inclusion), pulled live
-from ProPublica's own public Nonprofit Explorer API -- the same public
+from ProPublica's own public Nonprofit Explorer API, the same public
 dataset ProPublica's own product runs on.
 
 ## What it answers
@@ -30,7 +30,7 @@ Source: [ProPublica Nonprofit Explorer API](https://projects.propublica.org/nonp
 (public, no key required), which republishes IRS Form 990 e-file data.
 `scripts/fetch_data.py` resolves each organization's EIN by live name
 search, then **validates the resolved EIN against a known-good value**
-for this fixed 20-org sample before accepting it -- a plain fuzzy-name
+for this fixed 20-org sample before accepting it: a plain fuzzy-name
 search isn't reliable enough to trust blindly (confirmed during
 development: a search for "Chalkbeat" ranked an unrelated Baptist
 church above the actual newsroom, which is why Chalkbeat isn't in this
@@ -55,15 +55,15 @@ leverage                        = liabilities / assets
 `largest_revenue_category_share` is a **revenue-mix concentration
 proxy, not a single-source/single-donor concentration measure.** 70%
 "contributions" could be one foundation or ten thousand small
-individual donors -- this dataset can't distinguish them, and the
+individual donors; this dataset can't distinguish them, and the
 dashboard doesn't claim to.
 
 **One honest limitation:** the API's summary fields don't break Form
 990 Part IX expenses into program/management/fundraising columns (that
 detail only exists in the full e-file XML), so this dashboard does
 **not** compute the classic Charity Navigator-style "program expense
-ratio." What it computes instead -- reserve runway, leverage, revenue
-mix, operating margin -- are genuine, independently useful solvency
+ratio." What it computes instead (reserve runway, leverage, revenue
+mix, operating margin) are genuine, independently useful solvency
 signals, and every one is traceable to a specific filed field.
 
 ## Screening thresholds are illustrative, not standards
@@ -71,7 +71,7 @@ signals, and every one is traceable to a specific filed field.
 The dashboard flags a filing when it crosses thresholds like "reserve
 runway under 3 months" or "leverage over 50%." These are **illustrative
 screening thresholds this project chose, not universal nonprofit
-solvency standards** -- there's no authoritative source backing "3
+solvency standards**: there's no authoritative source backing "3
 months" or "50%" as the correct cutoff for every organization. They're
 adjustable in the sidebar for exactly that reason: treat them as a
 starting point for judgment, not a rating.
@@ -79,7 +79,7 @@ starting point for judgment, not a rating.
 ## Peer comparison
 
 Comparisons use **each organization's own most recent filing**, which
-can be a different tax year across organizations -- Form 990 filing
+can be a different tax year across organizations. Form 990 filing
 timing isn't synchronized across the sample, and the dashboard labels
 the comparison "latest available filing by organization" rather than
 claiming a single shared fiscal year.
